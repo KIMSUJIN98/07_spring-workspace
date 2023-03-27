@@ -1,0 +1,169 @@
+#1 mapper : 실행할 sql문들을 기록해 둔 mapper 파일들을 등록하는 영역
+   namespace : 해당 mapper 파일의 고유한 별칭 // 별칭 안주면 경로를 지정해줘야 함
+// mybatis-config.xml에 미리 등록해두려면 해당 mapper 파일이 진짜 존재하고 있는 상태여야함! 뿐만 아니라 namespace 등록까지 지정돼있어야함
+
+<mappers>
+	<mapper resource="/mappers/member-mapper.xml"/>
+	<mapper resource="/mappers/board-mapper.xml"/>
+</mappers>
+
+
+#2 environment : mybatis에서 연동할 DB정보들을 등록하는 영역, 여러개 등록 가능
+<environments default="development">
+	<environment id="development">
+		<transactionManager type="JDBC"/>
+		<dataSource type="POOLED">
+			<property name="driver" value="oracle.jdbc.driver.OracleDriver"/>
+			<property name="url" value="jdbc:oracle:thin:@localhost:1521:xe"/>
+			<property name="username" value="mybatis"/>
+			<property name="password" value="mybatis"/>
+		</dataSource>
+	</environment>
+</environments>
+
+
+#3 dataSource는  POOLED와 UNPOOLED 둘 중 하나 선택가능(ConnectionPool 사용여부)
+// ConnectionPool : Connection 객체를 담아 둘 수 있는 영역, 한 번 사용된 Connection 객체를 담아 두면 재사용 가능
+// POOLED 사용, UNPOOLED 미사용
+
+
+#4 openSession(boolean autoCommit) : 자동 커밋 여부를 개발자가 직접 설정함(true한다/false안한다:기본값)
+
+public static SqlSession getSqlSession() {
+	// mybatis-config.xml 파일 읽어들여서 해당 db와 접속된 SqlSession 객체 생성해서 반환
+	SqlSession sqlSession = null;
+		
+	// SqlSession 생성하기 위해서 => SqlSessionFactory 생성하기 위해서 => SqlSessionFactoryBuilder 필요	
+	String resource = "/mybatis-config.xml"; // '/'하게되면 소스의 최상위 폴더 => src, resources.. 가리킴
+		
+	try {
+		InputStream stream = Resources.getResourceAsStream(resource);
+		sqlSession = new SqlSessionFactoryBuilder().build(stream).openSession(false);
+	} catch (IOException e) {
+		e.printStackTrace();
+	}
+	return sqlSession;
+}
+
+
+#5 프레임워크
+// 개발자가 보다 편리한 환경에서 개발할 수 있도록 제공하는 틀로, 공통적으로 사용되는 라이브러리/개발도구/인터페이스 등등을 의미
+// 많은 개발자들이 동시에 작업하더라도 통일성있게 빠르고 안정적으로 개발하여 생산성을 향상시키고자 사용함
+// 개발자들이 따라야하는 가이드라인을 제공하여, 개발범위가 정해져있고 개발자들을 위한 다양한 도구들을 지원함
+// 개발시간을 줄일 수 있고, 유지보수가 용이하나 프레임워크에 너무 의존하면 개발자들의 능력이 떨어지고 익숙해지기까지 시간이 걸림
+
+
+#6 프레임워크 종류
+// 영속성 : 데이터 관련한 CRUD 기능들을 보다 편리하게 작업할 수 있도록 제공해주는 프레임워크 ex)myBatis, Hibernate, JPA, ..
+// 자바 : 웹 애플리케이션에 초점을 맞춰 필요한 요소들을 모듈화해서 제공해주는 프레임워크 ex)Spring, Struts
+// 화면구현 : Front-End 보다 쉽게 구현할 수 있도록 제공해주는 프레임워크 ex)BootStrap, ..
+// 기능 및 지원 : 특정 기능이나 업무 수행에 도움을 줄 수 있게 제공하는 프레임워크 ex)Log4j, ..
+
+
+#7 mybatis 쿼리 동적
+<!-- 
+	* DML문
+	<insert|update|delete id="각 sql 식별자" [parameterType="전달받은 자바타입(vo일경우 = 풀클래스명 | 별칭)"]>
+		
+	</insert|update|delete>
+	// DML문 같은 경우 어짜피 실행결과가 처리된 행수(int)
+	=> 따라서 resultType, resultMap 에 대한 속성은 안써도됨
+		
+		
+	* SELECT문
+	<select id="각 sql 식별자" [parameterType="전달받은 자바타입(vo일경우 = 풀클래스명 | 별칭)" resultType|resultMap = "결과반환타입"]>
+								  
+	얘는 실행했을 때의 결과가 매번 달라짐..
+	count(*) => 전체행수 : int
+	USER_NAME => 이름 : String
+	한 행 조회 => 멤버객체
+	여러행 조회 => ArrayList
+		
+	? 대신에 해당 sql문에 전달된 객체로부터 값을 꺼낼때 #{필드명 또는 변수명 또는 키값}
+	
+	</select>
+-->
+	 
+<!-- 
+	* resultMap 마이바티스의 핵심기능 중 하나!!
+	ResultSet으로부터 조회된 컬럼값 하나씩 뽑아서 내가 지정한 vo객체에 각 필드에 담는(매핑) JDBC 코드를 줄여주는 역할 수행
+		 
+	<resultMap id="식별자" type="조회결과를 담아서 반환하고자 하는 vo객체의 타입">
+		<result column(db꺼)="조회 결과를 뽑고자 하는 db컬럼명" property(java꺼)="해당 결과를 담고자 하는 필드명"/>
+		<result column(db꺼)="조회 결과를 뽑고자 하는 db컬럼명" property(java꺼)="해당 결과를 담고자 하는 필드명"/>
+		<result column(db꺼)="조회 결과를 뽑고자 하는 db컬럼명" property(java꺼)="해당 결과를 담고자 하는 필드명"/>
+	</resultMap>
+-->
+
+	<select id="selectSearchCount" resultType="_int">
+		select 
+		       count(*)
+		  from board b
+		  join member on (board_writer = user_no)
+		 where b.status = 'Y'
+		 <if test="condition == 'writer'">
+		 	and user_id
+		 </if>
+		 <if test="condition == 'title'">
+		 	and board_title
+		 </if>
+		 <if test="condition == 'content'">
+		 	and board_content
+		 </if>
+		 like '%' || #{keyword} || '%'
+	</select>
+	
+	<select id="selectSearchList" resultMap="boardResultSet">
+		select
+		       board_no
+		     , board_title
+		     , user_id
+		     , count
+		     , create_date
+		  from board b
+		  join member on (board_writer = user_no)
+		 where b.status = 'Y'
+		 <choose>
+		 	<when test="condition == 'writer'">
+		 		and user_id
+		 	</when>
+		 	<when test="condition == 'title'">
+		 		and board_title
+		 	</when>
+		 	<otherwise>
+		 		and board_content
+		 	</otherwise>
+		 </choose>
+		  like '%' || #{keyword} || '%'
+		 order
+		    by board_no desc
+	</select>
+
+
+#8 select문 실행시 resultType과 resultMap의 차이
+// 결과반환타입이 한가지 형태일때 resultType, 여러개로 객체형태일때 resultMap
+
+#8-1 DML문(insert,update,delete) 같은 경우 어짜피 실행결과가 처리된 행수(int)를 반환하므로 resultType 혹은 resultMap 생략가능
+
+
+#9 selectOne()과 selectList()의 차이
+// selectOne은 레코드 하나, selectList은 여러 레코드
+// selectOne : 쿼리 결과가 없으면 null을 반환 / selectList : 쿼리 결과를 List<E>로 반환(결과없으면 빈리스트 반환)
+
+
+#10 쿼리짜기 <select><insert><update><delete>
+
+
+#11 typeAliases와 mapper 등록
+<!-- typeAlias : VO/DTO 클래스들의 풀클래스명을 단순한 클래스명으로 사용하기 위해서 별칭을 등록할 수 있는 영역 -->
+<typeAliases>
+	<typeAlias type="com.kh.mybatis.member.model.vo.Member" alias="Member"/>
+	<typeAlias type="com.kh.mybatis.board.model.vo.Board" alias="Board"/>
+	<typeAlias type="com.kh.mybatis.board.model.vo.Reply" alias="Reply"/>
+</typeAliases>
+
+<!-- * mapper : 실행할 sql문들을 기록해 둔 mapper 파일들을 등록하는 영역 -->
+<mappers>
+	<mapper resource="/mappers/member-mapper.xml"/>
+	<mapper resource="/mappers/board-mapper.xml"/>
+</mappers>

@@ -1,0 +1,77 @@
+1. mybatis-config.xml 이거 잘보자
+	
+	- settings 오탈자 유의
+	<settings>
+		<setting name="jdbcTypeForNull" value="NULL"/>
+	</settings>
+	
+	- typeAliases 미리 등록해두려면 해당 클래스가 진짜 존재하고 있는 상태여야함(내용은 없더라도)
+	<typeAliases>
+		<typeAlias type="com.kh.spring.member.model.vo.Member" alias="Member"/>
+		<typeAlias type="com.kh.spring.board.model.vo.Board" alias="Board"/>
+		<typeAlias type="com.kh.spring.board.model.vo.Reply" alias="Reply"/>
+	</typeAliases>
+	
+	- mappers 미리 등록해두려면 해당 mapper 파일이 진짜 존재하고 있는 상태여야함! 뿐만 아니라 "namespace 등록까지 지정돼있어야함"!!(namespace값 중복 불가)
+	<mappers>
+		<mapper resource="/mappers/member-mapper.xml"/>
+		<mapper resource="/mappers/board-mapper.xml"/>
+	</mappers>
+	
+
+2. 쿼리 -> 동적으로..!!
+
+	<select id="selectSearchCount" resultType="_int">
+		select 
+		       count(*)
+		  from board b
+		  join member on (board_writer = user_no)
+		 where b.status = 'Y'
+		 <if test="condition == 'writer'">
+		 	and user_id
+		 </if>
+		 <if test="condition == 'title'">
+		 	and board_title
+		 </if>
+		 <if test="condition == 'content'">
+		 	and board_content
+		 </if>
+		 like '%' || #{keyword} || '%'
+	</select>
+	
+	<select id="selectSearchList" resultMap="boardResultSet">
+		select
+		       board_no
+		     , board_title
+		     , user_id
+		     , count
+		     , create_date
+		  from board b
+		  join member on (board_writer = user_no)
+		 where b.status = 'Y'
+		 <choose>
+		 	<when test="condition == 'writer'">
+		 		and user_id
+		 	</when>
+		 	<when test="condition == 'title'">
+		 		and board_title
+		 	</when>
+		 	<otherwise>
+		 		and board_content
+		 	</otherwise>
+		 </choose>
+		  like '%' || #{keyword} || '%'
+		 order
+		    by board_no desc
+	</select>
+
+
+3. root-context.xml
+	
+	- bean이라는 태그로 xml 등록하기 : property 정도는 외워야 함! destroy-method 기능 : 필요없을 때 알아서 소멸시키는..?
+	<bean class="org.apache.commons.dbcp.BasicDataSource" id="dataSource" destroy-method="close">
+		<property name="driverClassName" value="oracle.jdbc.driver.OracleDriver"/>
+		<property name="url" value="jdbc:oracle:thin:@localhost:1521:xe"/>
+		<property name="username" value="spring"/>
+		<property name="password" value="spring"/>
+	</bean>

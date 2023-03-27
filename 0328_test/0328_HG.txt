@@ -1,0 +1,81 @@
+-- 평가자 체크리스트
+1. mybatis-config.xml
+    settings
+    TypeAliases
+    mapper namespace
+
+2. 쿼리 -> 동적으로
+    title like '%' || {keyword} || '%'
+
+3. root-context.xml
+
+-- 서술형
+1. mapper namespace
+    해당 mapper 파일의 고유한 별칭
+
+2. environment
+    mybatis에서 연동할 DB정보들을 등록하는 영역
+
+3. dataSource
+    POOLED와 UNPOOLED 둘 중 하나 선택할 수 있음(ConnectionPool 사용여부)
+
+4. openSession(boolean autocommit) : 자동 커밋 여부 (true면 하겠다. false면 안하겠다.)
+
+5. framework란?
+    개발자가 소프트웨어를 개발함에 있어 코드를 구현하는 개발 시간을 줄이고
+    코드의 재사용성을 증가시키기 위한 일련의 클래스 묶음이나 뼈대, 틀을
+    제공하는 라이브러리를 구현해놓은 것
+    - 개발자가 보다 편리한 환경에서 개발할 수 있도록 제공하는 틀, 뼈대라고 생각
+    - 소프트웨어 개발의 입장으로써는 공통적으로 사용되는 라이브러리/개발도구/인터페이스 등등을 의미
+
+6. framework 종류 : 영속성(주로 DB관련) => myBatis, ..
+    영속성 Framework | MyBatis, Hibernate | 데이터의 저장, 조회, 변경, 삭제를 다루는 클래스 및 설정 파일을 라이브러리화하여 구현
+    자바 Framework | Spring Framework, 전자정부표준 Spring, Struts | Java EE를 통한 웹 애플리케이션 개발에 초점을 맞춰 필요한 요소들을 모듈화해 제공
+    화면구현 Framework | Bootstrap, Foundation, MDL | Front-End를 보다 쉽게 구현할 수 있게 틀 제공
+    기능지원 Framework | Log4j, JUnit 5, ANT | 특정 기능이나 업무 수행에 도움을 줄 수 있는 기능 제공
+    - 영속성 : 데이터 관련한 CRUD 기능들을 보다 편리하게 작업할 수 있도록 제공해주는 프레임워크 ex)MyBatis, Hibernate, JPA, ... 
+    - 자바 : 웹 애플리케이션에 초점을 맞워 필요한 요소들을 모듈화해서 제공해주는 프레임워크 ex)Spring, Struts
+    - 화면구현	: Front-End 보다 쉽게 구현할 수 있도록 제공해주는 프레임워크 ex)BootStrap ..
+    - 기능 및 지원 : 특정 기능이나 업무 수행에 도움을 줄 수 있게 제공하는 프레임워크 ex)Log4j ..
+
+7. myBatis 쿼리 동적 => if, choose, ..
+
+8. select문 실행시
+    resultType
+        <select id="각 sql 식별자" [parameterType="전달받은 자바타입(vo일 경우 = 풀클래스명 | 별칭)"
+                                    resultType="결과반환타입"]>
+                                    
+        얘는 실행했을 때의 결과가 매번 달라짐..
+        count(*) => 전체행수 : int
+        USER_NAME => 이름 : String
+        한 행 조회 => 멤버객체
+        여러행 조회 => ArrayList
+        
+        ? 대신에 해당 sql문에 전달된 객체로부터 값을 꺼낼 때 #{필드명 또는 변수명 또는 키값}
+            
+        </select>
+
+    resultMap
+        * resultMap 마이바티스의 핵심기능 중 하나!!
+        ResultSet으로부터 조회된 컬럼값 하나씩 뽑아서 내가 지정한 vo객체에 각 필드에 담는(매핑) JDBC 코드를 줄여주는 역할 수행
+        
+        <resultMap id="식별자" type="조회결과를 담아서 반환하고자 하는 vo객체의 타입">
+        <result column(DB꺼) = "조회 결과를 뽑고자 하는 DB컬럼명" property(JAVA꺼)="해당 결과를 담고자 하는 필드명"/>
+        <result column(DB꺼) = "조회 결과를 뽑고자 하는 DB컬럼명" property(JAVA꺼)="해당 결과를 담고자 하는 필드명"/>
+        <result column(DB꺼) = "조회 결과를 뽑고자 하는 DB컬럼명" property(JAVA꺼)="해당 결과를 담고자 하는 필드명"/>
+        
+        </resultMap>
+
+8-1. DML문 resultXXX => 자동으로 리턴
+    <insert|update|delete id="각 sql 식별자" parameterType="전달받은 자바타입(vo일 경우 = 풀클래스명 | 별칭)">
+    </insert|/update|/delete>
+    DML문 같은 경우 어차피 실행결과가 처리된 행수(int)
+    => 따라서 resultType, resultMap 에 대한 속성은 안써도 됨.
+
+9. selectOne(), selectList()
+    selectOne은 레코드 하나, selectList은 여러 레코드
+
+10. 쿼리짜기 <select> <insert> <update> <delete>
+
+11. TypeAliases mapper
+    typeAlias : VO/DTO 클래스들의 풀클래스명을 단순한 클래스명으로 사용하기 위해서 별칭을 등록할 수 있는 영역
