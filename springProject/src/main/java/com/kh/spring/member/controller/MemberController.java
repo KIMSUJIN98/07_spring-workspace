@@ -1,16 +1,12 @@
 package com.kh.spring.member.controller;
 
-import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
-import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.ModelAndView;
 
-import com.kh.spring.member.model.service.MemberService;
 import com.kh.spring.member.model.service.MemberServiceImpl;
 import com.kh.spring.member.model.vo.Member;
 
@@ -189,7 +185,7 @@ public class MemberController {
 		
 	}
 	
-	@RequestMapping("logout.me")	// 188라인(나중에 지우기)
+	@RequestMapping("logout.me")
 	public String logoutMember(HttpSession session) {
 		session.invalidate();
 		return "redirect:/";
