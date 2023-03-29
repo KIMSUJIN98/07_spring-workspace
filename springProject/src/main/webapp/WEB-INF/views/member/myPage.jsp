@@ -1,12 +1,12 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8"
     pageEncoding="UTF-8"%>
+<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <!DOCTYPE html>
 <html>
 <head>
 <meta charset="UTF-8">
 <title>Insert title here</title>
 </head>
-
 
 <!-- 이쪽에 메뉴바 포함 할꺼임 -->
 <jsp:include page="../common/header.jsp"/>
@@ -38,11 +38,20 @@
                <input type="text" class="form-control" id="address" name="address" value="${ loginUser.address }"><br>
                
                <label for=""> &nbsp; Gender : </label> &nbsp;&nbsp;
-               <input type="radio" name="gender" id="Male" value="M">
-               <label for="Male">남자</label> &nbsp;&nbsp;
-               <input type="radio" name="gender" id="Female" value="F">
-               <label for="Female">여자</label><br>
-               
+               <c:choose>
+            		<c:when test="${ loginUser.gender } == 'M'">
+            			<input type="radio" name="gender" id="Male" value="M" checked>
+		                <label for="Male">남자</label> &nbsp;&nbsp;
+		                <input type="radio" name="gender" id="Female" value="F">
+		                <label for="Female">여자</label><br>
+            		</c:when>
+            		<c:otherwise>
+            			<input type="radio" name="gender" id="Male" value="M">
+		                <label for="Male">남자</label> &nbsp;&nbsp;
+		                <input type="radio" name="gender" id="Female" value="F" checked>
+		                <label for="Female">여자</label><br>
+            		</c:otherwise>
+               </c:choose> 
                
            </div>
            <br>
