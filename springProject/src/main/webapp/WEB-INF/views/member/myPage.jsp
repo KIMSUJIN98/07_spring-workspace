@@ -1,6 +1,5 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8"
     pageEncoding="UTF-8"%>
-<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <!DOCTYPE html>
 <html>
 <head>
@@ -24,7 +23,7 @@
 	               <input type="text" class="form-control" id="userId" name="userId" value="${ loginUser.userId }" readonly><br>
 	               
 	               <label for="userName">* Name :</label>
-	               <input type="text" class="form-control" id="userName" name="userName" value="${ loginUser.userName }" readonly><br>
+	               <input type="text" class="form-control" id="userName" name="userName" value="${ loginUser.userName }" required><br> 		<!-- 개명할 수도 있으므로 readonly 제거하고, 필수 입력사항이므로 required 부여함 -->
 	               
 	               <label for="email"> &nbsp; Email :</label>
 	               <input type="email" class="form-control" id="email" name="email" value="${ loginUser.email }"><br>
@@ -39,20 +38,21 @@
 	               <input type="text" class="form-control" id="address" name="address" value="${ loginUser.address }"><br>
 	               
 	               <label for=""> &nbsp; Gender : </label> &nbsp;&nbsp;
-	               <c:choose>
-	            		<c:when test="${ loginUser.gender } == 'M'">
-	            			<input type="radio" name="gender" id="Male" value="M" checked>
-			                <label for="Male">남자</label> &nbsp;&nbsp;
-			                <input type="radio" name="gender" id="Female" value="F">
-			                <label for="Female">여자</label><br>
-	            		</c:when>
-	            		<c:otherwise>
-	            			<input type="radio" name="gender" id="Male" value="M">
-			                <label for="Male">남자</label> &nbsp;&nbsp;
-			                <input type="radio" name="gender" id="Female" value="F" checked>
-			                <label for="Female">여자</label><br>
-	            		</c:otherwise>
-	               </c:choose> 
+	               <input type="radio" name="gender" id="Male" value="M">		<!-- radio btn은 name값이 일치해야 하나의 값만 선택된다 -->
+			       <label for="Male">남자</label> &nbsp;&nbsp;
+			       <input type="radio" name="gender" id="Female" value="F">
+			       <label for="Female">여자</label><br>
+			                
+	               <script>
+	                	$(function(){
+	                		if("${loginUser.gender}" != ""){
+	                			$("input[value=${loginUser.gender}]").attr("checked", true);
+	                		}
+	                	})
+	               </script>		<!-- gender가 필수 입력사항이 아니므로 값이 없을 수도 있다! 분기처리 확실히 해야함. -->
+	               
+	               
+	               
 	               
 	           </div>
 	           <br>
@@ -85,9 +85,10 @@
 	                               정말로 탈퇴 하시겠습니까?
 	               </b>
 	
-	               <form action="" method="post">
+	               <form action="delete.me" method="post">
 	                       비밀번호 : 
 	                   <input type="password" name="userPwd" required>
+	                   <input type="hidden" name="userId" value="${ loginUser.userId }">
 	                   <button type="submit" class="btn btn-danger">탈퇴하기</button>
 	               </form>
 	
