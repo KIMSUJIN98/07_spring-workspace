@@ -71,7 +71,7 @@
                 <tbody>
                 	<c:forEach var="b" items="${ list }">
 	                    <tr>
-	                        <td class="bno">${ b.boardNo }</td>
+	                        <td class="bno">${ b.boardNo }</td> <!-- 클래스가 아닌 id로 id="bno"로 설정하게되면, 반복문을 수행하며 생성되는 모든 값의 id가 똑같아지므로 문제발생! 따라서 클래스 값을 인가해줌.  -->
 	                        <td>${ b.boardTitle }</td>
 	                        <td>${ b.boardWriter }</td>
 	                        <td>${ b.count }</td>
@@ -86,6 +86,15 @@
                 </tbody>
             </table>
             <br>
+            
+            
+            <script>
+            	$(function(){
+            		$("#boardList>tbody>tr").click(function(){
+            			location.href='detail.bo?bno=' + $(this).children(".bno").text(); 		// .bno => 클래스 속성이 bno인 것
+            		})
+            	})
+            </script>
 		
 			
             <div id="pagingArea">

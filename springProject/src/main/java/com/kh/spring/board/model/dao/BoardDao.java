@@ -27,6 +27,18 @@ public class BoardDao {
 		
 		return (ArrayList)sqlSession.selectList("boardMapper.selectList", null, rowBounds); // 전체 게시글을 조회한 다음, rowBounds를 이용해 원하는 출력으로 잘라준다.
 	}
+	
+	public int insertBoard(SqlSessionTemplate sqlSession, Board b) {
+		return sqlSession.insert("boardMapper.insertBoard", b);
+	}
+	
+	public int increaseCount(SqlSessionTemplate sqlSession, int boardNo) {
+		return sqlSession.update("boardMapper.increaseCount", boardNo);
+	}
+	
+	public Board selectBoard(SqlSessionTemplate sqlSession, int boardNo) {
+		return sqlSession.selectOne("boardMapper.selectBoard", boardNo);
+	}
 
 	
 }
