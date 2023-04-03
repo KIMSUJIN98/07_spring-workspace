@@ -81,4 +81,22 @@
 		 where board_no = #{boardNo}
 		 
 	</select> <!-- and status는 이미 앞단에서 걸러졌으므로 불필요함 -->
+	
+	<update id="deleteBoard">
+		update
+			   board
+		   set status='N'
+		 where board_no = #{boardNo}
+	</update>
+	
+	<update id="updateBoard">
+		update
+			   board
+		   set board_title = #{boardTitle}
+		     , board_content = #{boardContent}
+		     , origin_name = #{originName}
+		     , change_name = #{changeName}
+		 where board_no = #{boardNo}
+	</update>
+	
 </mapper>
