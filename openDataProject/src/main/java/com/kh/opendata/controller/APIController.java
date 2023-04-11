@@ -85,13 +85,13 @@ public class APIController {
 	
 	
 	
-	public static final String servicekey2 = "9fVCTFes9PHIJUbJs5tpoq0ASuiR09ZaQ%2BbLG3Kiw2c7k4ltx6YfS0W7sGmkd50Bb34eWV4pTF%2ByEOsrnAoOVQ%3D%3D";
 	
 	@ResponseBody
 	@RequestMapping(value="family.do", produces="application/json; charset=utf-8")
 	public String familyCard(String cpHgu) throws IOException {
-		String url = "https://apis.data.go.kr/6260000/BusanFmlyLvcrInfoService/getFmlyLvcrInfo";
-		url += "?serviceKey=" + servicekey2;
+		String url = "http://apis.data.go.kr/6260000/BusanFmlyLvcrInfoService/getFmlyLvcrInfo";
+		url += "?serviceKey=" + servicekey;
+		url += "&pageNo=1";
 		url += "&numOfRows=10";
 		url += "&resultType=json";
 		url += "&cpHgu=" + URLEncoder.encode(cpHgu, "UTF-8");
@@ -124,7 +124,7 @@ public class APIController {
 	
 	@ResponseBody
 	@RequestMapping(value="disaster.do", produces="text/xml; charset=utf-8")
-	public String disasterShelter() throws IOException { 	// 부모 타입인 IOException으로 예외처리 // 127 line
+	public String disasterShelter() throws IOException { 	// 부모 타입인 IOException으로 예외처리
 		
 		String url = "https://apis.data.go.kr/1741000/TsunamiShelter3/getTsunamiShelter1List";
 		url += "?serviceKey=" + servicekey;

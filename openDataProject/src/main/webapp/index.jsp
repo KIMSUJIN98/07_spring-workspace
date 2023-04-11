@@ -124,8 +124,9 @@
 		})
 	</script>
 	
+	<hr>
 	
-	<h2>부산광역시 가족사랑카드참여업체 현황 조회</h2>
+	<h2>부산광역시 가족사랑카드참여업체 어린이집 현황조회</h2>
 	
 	지역 :
 	<select id="cpHgu">
@@ -150,7 +151,6 @@
 		<tbody></tbody>
 	</table>
 	
-	
 	<script>
 		$(function(){
 			$("#btn2").click(function(){
@@ -159,24 +159,28 @@
 					data:{cpHgu:$("#cpHgu").val()},
 					success:function(data){
 						//console.log(data);
-						//console.log(data.response.body.items);
+						//console.log(data.getFmlyLvcrInfo.body.items);
 						
-						const itemArr = data.response.body.items;
+						const itemArr = data.getFmlyLvcrInfo.body.items;
 						
 						let value = "";
 						for(let i in itemArr){
 							//console.log(itemArr[i]);
 							let item = itemArr[i];
 							
-							value += "<tr>"
-								+ "<td>" + item.cpCompname + "</td>"
-								+ "<td>" + item.cpCeoname + "</td>"
-								+ "<td>" + item.cpSanum + "</td>"
-								+ "<td>" + item.cpSidate + "</td>"
-								+ "<td>" + item.cpAddr + "</td>"
-								+ "<td>" + item.cpTel + "</td>"
-								+ "</tr>";
-						
+							for(let t in item){
+								let it = item[t];
+								//console.log(it);
+								
+								value += "<tr>"
+									+ "<td>" + it.cpCompname + "</td>"
+									+ "<td>" + it.cpCeoname + "</td>"
+									+ "<td>" + it.cpSanum + "</td>"
+									+ "<td>" + it.cpSidate + "</td>"
+									+ "<td>" + it.cpAddr + "</td>"
+									+ "<td>" + it.cpTel + "</td>"
+									+ "</tr>";
+							}
 						}
 						
 						$("#result2 tbody").html(value);
@@ -187,18 +191,14 @@
 				});
 			})
 		})
+		
+		
 	</script>
 	
 	
 	
 	
-	
-	
-	
-	
-	
-	
-	<hr> <!-- 201 라인 -->
+	<hr>
 	
 	<h2>지진해일대피소 정보</h2>
 	<input type="button" value="실행" id="btn3">
